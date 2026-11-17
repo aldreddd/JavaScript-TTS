@@ -69,22 +69,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            // Send request to backend
             const response = await fetch("/api/generate", {
                 method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    text: text,
-                    voice: voice,
-                    chunkSize: size
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, voice, chunkSize: size })
             });
 
-            const data = await response.json();
+            const responseText = await response.text();
+
+            let data;
+
+            try {
+                data = JSON.parse(responseText);
+            } catch (error) {
+                console.error("Invalid server response:", responseText);
+
+                throw new Error(
+                    `Server returned an invalid response. HTTP Status: ${response.status}`
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(data.error || "Generation failed.");
+            }
 
             if (!response.ok) {
                 throw new Error(data.error || "Generation failed.");

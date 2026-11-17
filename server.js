@@ -10,7 +10,7 @@ const { pipeline } = require("stream/promises");
 // =========================
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const outputFolder = path.join(__dirname, "TTS");
 const publicFolder = path.join(__dirname, "public");
